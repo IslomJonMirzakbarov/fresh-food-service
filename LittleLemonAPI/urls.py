@@ -23,5 +23,14 @@ urlpatterns = [
     path('order-items/', views.OrderItemListCreateView.as_view(),
          name='order-item-list-create'),
     path('order-items/<int:pk>', views.OrderItemRetrieveUpdateDestroyView.as_view(),
-         name='order-item-retrieve-update-destroy')
+         name='order-item-retrieve-update-destroy'),
+
+    path('groups/manager/users/', views.UserGroupManagement.as_view(),
+         name='manager-group-management'),
+    path('groups/manager/users/<int:user_id>/',
+         views.UserGroupManagement.as_view(), name='manager-group-management-delete'),
+    path('groups/delivery-crew/users/', views.UserGroupManagement.as_view(),
+         name='delivery-crew-group-management'),
+    path('groups/delivery-crew/users/<int:user_id>/',
+         views.UserGroupManagement.as_view(), name='delivery-crew-group-management-delete'),
 ]
