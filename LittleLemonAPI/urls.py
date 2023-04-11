@@ -12,19 +12,6 @@ urlpatterns = [
     path('menu-items/<int:pk>', views.MenuItemRetrieveUpdateDestroyView.as_view(),
          name='menu-item-retrieve-update-destroy'),
 
-    path('carts/', views.CartListCreateView.as_view(), name='cart-list-create'),
-    path('carts/<int:pk>', views.CartRetrieveUpdateDestroyView.as_view(),
-         name='cart-retrieve-update-destroy'),
-
-    path('orders/', views.OrderListCreateView.as_view(), name='order-list-create'),
-    path('orders/<int:pk>', views.OrderRetrieveUpdateDestroyView.as_view(),
-         name='order-retrieve-update-destroy'),
-
-    path('order-items/', views.OrderItemListCreateView.as_view(),
-         name='order-item-list-create'),
-    path('order-items/<int:pk>', views.OrderItemRetrieveUpdateDestroyView.as_view(),
-         name='order-item-retrieve-update-destroy'),
-
     path('groups/manager/users/', views.UserGroupManagement.as_view(
         group_name='Manager'), name='manager-group-management'),
     path('groups/manager/users/<int:user_id>/', views.UserGroupManagement.as_view(
@@ -33,4 +20,8 @@ urlpatterns = [
         group_name='Delivery crew'), name='delivery-crew-group-management'),
     path('groups/delivery-crew/users/<int:user_id>/', views.UserGroupManagement.as_view(
         group_name='Delivery crew'), name='delivery-crew-group-management-delete'),
+
+    path('cart/menu-items/', views.CartManagement.as_view(), name='cart-management'),
+    path('orders/', views.OrderListView.as_view(), name='orders'),
+    path('orders/<int:pk>', views.OrderDetailView.as_view(), name='order-detail')
 ]

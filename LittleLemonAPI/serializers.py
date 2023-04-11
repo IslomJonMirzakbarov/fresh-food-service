@@ -15,8 +15,16 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    model = Cart
-    fields = '__all__'
+    menuitem = serializers.PrimaryKeyRelatedField(
+        queryset=MenuItem.objects.all())
+    unit_price = serializers.DecimalField(
+        max_digits=6, decimal_places=2, read_only=True)
+    price = serializers.DecimalField(
+        max_digits=6, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = Cart
+        fields = ['menuitem', 'quantity', 'unit_price', 'price']
 
 
 class OrderSerializer(serializers.ModelSerializer):

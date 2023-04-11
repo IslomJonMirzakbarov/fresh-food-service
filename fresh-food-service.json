@@ -1,0 +1,57 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "fresh-food-service",
+    "dateExported": "2023-04-11T14:46:42.629Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "18c05209-aaf4-4843-83b1-5f9eadd2c9ed",
+            "colId": "31110d95-030d-4ca1-bd49-28606e5d5bef",
+            "containerId": "",
+            "name": "cart item create",
+            "url": "http://127.0.0.1:8000/api/cart/menu-items/",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-04-11T14:43:04.371Z",
+            "modified": "2023-04-11T14:44:09.725Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"menuitem\": 1,\n    \"quantity\": 2\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "14ef5d0c50d680747c9e9cf2c04b2d109e59c610",
+                "bearerPrefix": "Token"
+            },
+            "tests": []
+        },
+        {
+            "_id": "4b007ba9-2b7c-44de-93c2-713cedfa1d97",
+            "colId": "31110d95-030d-4ca1-bd49-28606e5d5bef",
+            "containerId": "",
+            "name": "menu item create",
+            "url": "http://127.0.0.1:8000/api/menu-items/",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2023-04-11T14:44:27.174Z",
+            "modified": "2023-04-11T14:45:17.422Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"title\": \"New Menu Item\",\n    \"price\": 12.99,\n    \"featured\": true,\n    \"category\": 1\n}\n",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "ee9c23d744c0b8d86370ba5f606824b7498ea031",
+                "bearerPrefix": "Token"
+            },
+            "tests": []
+        }
+    ]
+}
