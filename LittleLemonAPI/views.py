@@ -53,7 +53,7 @@ class CartManagement(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
     def delete(self, request, *args, **kwargs):
-        user_carts = self.request.get_queryset()
+        user_carts = self.get_queryset()
         user_carts.delete()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -150,6 +150,14 @@ class MenuItemListCreateView(generics.ListCreateAPIView):
     search_fields = ['name', 'description', 'category_name']
     ordering_fields = ['name', 'price', 'category']
 
+    def create(self, request, *args, **kwargs):
+        title = request.data.get('title')
+        category_id = request.data.get('category')
+        if MenuItem.objects.filter(title=title, category_id=category_id).exists():
+            return response.Response({'message': 'A menu item with the same title and category already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return super().create(request, *args, **kwargs)
+
     def get_permissions(self):
         if self.request.method == 'POST':
             self.permission_classes = [IsManager]
@@ -158,7 +166,7 @@ class MenuItemListCreateView(generics.ListCreateAPIView):
         return super().get_permissions()
 
 
-class MenuItemRetrieveUpdateDestroyView(generics.ListCreateAPIView):
+class MenuItemRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
 

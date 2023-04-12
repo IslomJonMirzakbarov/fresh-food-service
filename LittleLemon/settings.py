@@ -63,6 +63,11 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+DJOSER = {
+    'SERIALIZERS': {
+        'user': 'LittleLemonAPI.serializers.CustomUserSerializer',
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
