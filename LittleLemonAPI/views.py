@@ -13,6 +13,9 @@ class UserGroupManagement(views.APIView):
         if not IsManager().has_permission(request, self):
             return response.Response(status=status.HTTP_403_FORBIDDEN)
 
+        if 'user_id' in kwargs:
+            return self.delete(request, kwargs['user_id'])
+
         group = get_object_or_404(Group, name=self.group_name)
         users = group.user_set.all()
         user_data = [{'id': user.id, 'username': user.username}
@@ -29,12 +32,12 @@ class UserGroupManagement(views.APIView):
         group.user_set.add(user)
         return response.Response(status=status.HTTP_201_CREATED)
 
-    def delete(self, request, *args, **kwargs):
-        if not IsManager().has_permission(request, self):
-            return response.Response(status=status.HTTP_403_FORBIDDEN)
+    def delete(self, request, user_id):
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return response.Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        user_id = kwargs.get('user_id')
-        user = get_object_or_404(User, pk=user_id)
         group = get_object_or_404(Group, name=self.group_name)
         group.user_set.remove(user)
         return response.Response(status=status.HTTP_200_OK)

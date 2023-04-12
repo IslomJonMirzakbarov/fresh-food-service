@@ -15,11 +15,11 @@ urlpatterns = [
     path('groups/manager/users/', views.UserGroupManagement.as_view(
         group_name='Manager'), name='manager-group-management'),
     path('groups/manager/users/<int:user_id>/', views.UserGroupManagement.as_view(
-        group_name='Manager'), name='manager-group-management-delete'),
+        group_name='Manager'), name='manager-group-management-user'),
     path('groups/delivery-crew/users/', views.UserGroupManagement.as_view(
         group_name='Delivery crew'), name='delivery-crew-group-management'),
     path('groups/delivery-crew/users/<int:user_id>/', views.UserGroupManagement.as_view(
-        group_name='Delivery crew'), name='delivery-crew-group-management-delete'),
+        group_name='Delivery crew'), name='delivery-crew-group-management-user'),
 
     path('cart/menu-items/', views.CartManagement.as_view(), name='cart-management'),
     path('orders/', views.OrderListView.as_view(), name='orders'),
