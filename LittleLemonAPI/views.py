@@ -85,13 +85,14 @@ class OrderListView(generics.ListCreateAPIView):
         order = serializer.save(user=user, total=total)
 
         for item in cart_items:
-            OrderItem.objects.create(
+            order_item = OrderItem.objects.create(
                 order=order,
                 menuitem=item.menuitem,
                 quantity=item.quantity,
                 unit_price=item.unit_price,
                 price=item.price,
             )
+
         cart_items.delete()
 
 
@@ -120,6 +121,26 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
                 return response.Response(status=status.HTTP_200_OK)
             else:
                 return response.Response(status=status.HTTP_400_BAD_REQUEST)
+        elif user.groups.filter(name='Manager').exists():
+            if 'delivery_crew' in request.data:
+                try:
+                    delivery_crew = User.objects.get(
+                        id=request.data['delivery_crew'])
+                    if delivery_crew.groups.filter(name='Delivery crew').exists():
+                        order.delivery_crew = delivery_crew
+                    else:
+                        return response.Response({"detail": "There's no delivery crew with this ID."},
+                                                 status=status.HTTP_400_BAD_REQUEST)
+                except User.DoesNotExist:
+                    return response.Response({"detail": "Delivery crew not found."},
+                                             status=status.HTTP_404_NOT_FOUND)
+
+            if 'status' in request.data:
+                order.status = request.data['status']
+                order.save()
+                return response.Response(status=status.HTTP_200_OK)
+            else:
+                return response.Response(status=status.HTTP_403_FORBIDDEN)
 
         return super().update(request, *args, **kwargs)
 
