@@ -10,19 +10,6 @@ FreshFoods is a Django project that provides an online food ordering system. The
 
 <!-- ![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg) -->
 
-## Project Structure 📁
-
-FreshFoods
-├── FreshFoodsAPI
-│ ├── admin.py
-│ ├── apps.py
-│ ├── models.py
-│ ├── permissions.py
-│ ├── serializers.py
-│ ├── views.py
-│ └── urls.py
-└── db.sqlite3
-
 ### FreshFoodsAPI
 
 This folder contains the main application files:
