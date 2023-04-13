@@ -13,6 +13,9 @@ class UserGroupManagement(views.APIView):
         if not IsManager().has_permission(request, self):
             return response.Response(status=status.HTTP_403_FORBIDDEN)
 
+        if 'user_id' in kwargs:
+            return self.delete(request, kwargs['user_id'])
+
         group = get_object_or_404(Group, name=self.group_name)
         users = group.user_set.all()
         user_data = [{'id': user.id, 'username': user.username}
@@ -29,12 +32,12 @@ class UserGroupManagement(views.APIView):
         group.user_set.add(user)
         return response.Response(status=status.HTTP_201_CREATED)
 
-    def delete(self, request, *args, **kwargs):
-        if not IsManager().has_permission(request, self):
-            return response.Response(status=status.HTTP_403_FORBIDDEN)
+    def delete(self, request, user_id):
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return response.Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        user_id = kwargs.get('user_id')
-        user = get_object_or_404(User, pk=user_id)
         group = get_object_or_404(Group, name=self.group_name)
         group.user_set.remove(user)
         return response.Response(status=status.HTTP_200_OK)
@@ -53,7 +56,7 @@ class CartManagement(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
     def delete(self, request, *args, **kwargs):
-        user_carts = self.request.get_queryset()
+        user_carts = self.get_queryset()
         user_carts.delete()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -82,13 +85,14 @@ class OrderListView(generics.ListCreateAPIView):
         order = serializer.save(user=user, total=total)
 
         for item in cart_items:
-            OrderItem.objects.create(
+            order_item = OrderItem.objects.create(
                 order=order,
                 menuitem=item.menuitem,
                 quantity=item.quantity,
                 unit_price=item.unit_price,
                 price=item.price,
             )
+
         cart_items.delete()
 
 
@@ -117,6 +121,26 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
                 return response.Response(status=status.HTTP_200_OK)
             else:
                 return response.Response(status=status.HTTP_400_BAD_REQUEST)
+        elif user.groups.filter(name='Manager').exists():
+            if 'delivery_crew' in request.data:
+                try:
+                    delivery_crew = User.objects.get(
+                        id=request.data['delivery_crew'])
+                    if delivery_crew.groups.filter(name='Delivery crew').exists():
+                        order.delivery_crew = delivery_crew
+                    else:
+                        return response.Response({"detail": "There's no delivery crew with this ID."},
+                                                 status=status.HTTP_400_BAD_REQUEST)
+                except User.DoesNotExist:
+                    return response.Response({"detail": "Delivery crew not found."},
+                                             status=status.HTTP_404_NOT_FOUND)
+
+            if 'status' in request.data:
+                order.status = request.data['status']
+                order.save()
+                return response.Response(status=status.HTTP_200_OK)
+            else:
+                return response.Response(status=status.HTTP_403_FORBIDDEN)
 
         return super().update(request, *args, **kwargs)
 
@@ -124,11 +148,23 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
 class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticated, IsManager]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            self.permission_classes = [permissions.AllowAny]
+        return super().get_permissions()
 
 
 class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticated, IsManager]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            self.permission_classes = [permissions.AllowAny]
+        return super().get_permissions()
 
 
 class MenuItemListCreateView(generics.ListCreateAPIView):
@@ -138,6 +174,14 @@ class MenuItemListCreateView(generics.ListCreateAPIView):
     search_fields = ['name', 'description', 'category_name']
     ordering_fields = ['name', 'price', 'category']
 
+    def create(self, request, *args, **kwargs):
+        title = request.data.get('title')
+        category_id = request.data.get('category')
+        if MenuItem.objects.filter(title=title, category_id=category_id).exists():
+            return response.Response({'message': 'A menu item with the same title and category already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return super().create(request, *args, **kwargs)
+
     def get_permissions(self):
         if self.request.method == 'POST':
             self.permission_classes = [IsManager]
@@ -146,7 +190,7 @@ class MenuItemListCreateView(generics.ListCreateAPIView):
         return super().get_permissions()
 
 
-class MenuItemRetrieveUpdateDestroyView(generics.ListCreateAPIView):
+class MenuItemRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
 
