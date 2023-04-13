@@ -8,7 +8,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('LittleLemonAPI', '0001_initial'),
+        ('FreshFoodsAPI', '0001_initial'),
     ]
 
     operations = [
@@ -20,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='orderitem',
             name='order',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='LittleLemonAPI.order'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='FreshFoodsAPI.order'),
         ),
     ]
