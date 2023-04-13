@@ -25,23 +25,41 @@ This folder contains the main application files:
 ## Installation 💻
 
 1. Clone this repository:
+
+```
    git clone https://github.com/yourusername/freshfoods.git
+```
 
 2. Create a virtual environment and activate it:
+
+```
    python -m venv venv
    source venv/bin/activate
+```
 
 3. Install the required dependencies:
+
+```
    pip install -r requirements.txt
+```
 
 4. Run the migrations to create the database:
+
+```
    python manage.py migrate
+```
 
 5. Create a superuser for the Django admin site:
+
+```
    python manage.py createsuperuser
+```
 
 6. Start the development server:
-   python manage.py runserver
+
+```
+   python manage.py runserver`
+```
 
 7. Visit the Django admin site at [http://localhost:8000/admin](http://localhost:8000/admin) to manage the application data.
 
